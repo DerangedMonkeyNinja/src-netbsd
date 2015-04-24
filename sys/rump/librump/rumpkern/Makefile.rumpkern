@@ -24,7 +24,7 @@ MAN=		rump.3 rump_lwproc.3
 
 #
 # Source modules, first the ones specifically implemented for librump.
-# 
+#
 SRCS+=	rump.c rumpcopy.c cons.c emul.c etfs_wrap.c intr.c	\
 	lwproc.c klock.c kobj_rename.c ltsleep.c scheduler.c	\
 	signals.c sleepq.c threads.c vm.c hyperentropy.c	\
@@ -93,6 +93,7 @@ SRCS+=	init_sysctl_base.c	\
 	kern_time.c		\
 	kern_timeout.c		\
 	kern_uidinfo.c		\
+	kern_uuid.c		\
 	kern_xxx.c		\
 	param.c			\
 	subr_devsw.c		\

@@ -1,4 +1,4 @@
-/* $NetBSD: syscallargs.h,v 1.257 2014/07/25 08:27:36 dholland Exp $ */
+/* $NetBSD$ */
 
 /*
  * System call argument lists.
@@ -2220,13 +2220,11 @@ struct sys_fsync_range_args {
 };
 check_syscall_args(sys_fsync_range)
 
-#ifndef RUMP_CLIENT
 struct sys_uuidgen_args {
 	syscallarg(struct uuid *) store;
 	syscallarg(int) count;
 };
 check_syscall_args(sys_uuidgen)
-#endif /* !RUMP_CLIENT */
 
 struct sys_getvfsstat_args {
 	syscallarg(struct statvfs *) buf;

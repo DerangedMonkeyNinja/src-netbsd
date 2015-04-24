@@ -115,6 +115,7 @@
 344  sys_kqueue             kqueue             rump___sysimpl_kqueue
 345  sys_nomodule           kevent             rump___sysimpl_kevent
 354  sys_fsync_range        fsync_range        rump___sysimpl_fsync_range
+355  sys_uuidgen            uuidgen            rump___sysimpl_uuidgen
 356  sys_getvfsstat         getvfsstat         rump___sysimpl_getvfsstat
 357  sys_statvfs1           statvfs1           rump___sysimpl_statvfs1
 358  sys_fstatvfs1          fstatvfs1          rump___sysimpl_fstatvfs1

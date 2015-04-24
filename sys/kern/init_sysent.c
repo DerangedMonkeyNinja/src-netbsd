@@ -1,4 +1,4 @@
-/* $NetBSD: init_sysent.c,v 1.287 2014/07/25 08:27:35 dholland Exp $ */
+/* $NetBSD$ */
 
 /*
  * System call switch table.
@@ -8,7 +8,7 @@
  */
 
 #include <sys/cdefs.h>
-__KERNEL_RCSID(0, "$NetBSD: init_sysent.c,v 1.287 2014/07/25 08:27:35 dholland Exp $");
+__KERNEL_RCSID(0, "$NetBSD$");
 
 #include "opt_modular.h"
 #include "opt_ntp.h"
@@ -103,6 +103,12 @@ __KERNEL_RCSID(0, "$NetBSD: init_sysent.c,v 1.287 2014/07/25 08:27:35 dholland E
 #define	compat_60(func) __CONCAT(compat_60_,func)
 #else
 #define	compat_60(func) sys_nosys
+#endif
+
+#ifdef COMPAT_70
+#define	compat_70(func) __CONCAT(compat_70_,func)
+#else
+#define	compat_70(func) sys_nosys
 #endif
 
 #define	s(type)	sizeof(type)

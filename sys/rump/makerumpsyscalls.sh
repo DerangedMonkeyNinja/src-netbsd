@@ -96,7 +96,7 @@ makesyscomponent ()
 }
 
 sawlibrump=false
-for file in ${LIBDIR}/librump*.so ; do
+for file in ${LIBDIR}/librump*.a ; do
 	b=$(basename ${file})
 	b=${b%%.*}
 	res=$(readelf -W --syms ${file} | awk "${AWKPROG}")

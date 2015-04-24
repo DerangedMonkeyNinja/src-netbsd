@@ -672,7 +672,7 @@
 
 354	STD	RUMP	{ int|sys||fsync_range(int fd, int flags, off_t start, \
 			    off_t length); }
-355	STD 		{ int|sys||uuidgen(struct uuid *store, int count); }
+355	STD 	RUMP	{ int|sys||uuidgen(struct uuid *store, int count); }
 356	STD 	RUMP	{ int|sys||getvfsstat(struct statvfs *buf, \
 			    size_t bufsize, int flags); }
 357	STD 	RUMP	{ int|sys||statvfs1(const char *path, \

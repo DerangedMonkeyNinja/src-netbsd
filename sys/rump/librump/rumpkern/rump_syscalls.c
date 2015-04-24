@@ -1,4 +1,4 @@
-/* $NetBSD: rump_syscalls.c,v 1.104 2014/07/25 08:27:36 dholland Exp $ */
+/* $NetBSD$ */
 
 /*
  * System call vector and marshalling for rump.
@@ -15,7 +15,7 @@
 
 #ifdef __NetBSD__
 #include <sys/cdefs.h>
-__KERNEL_RCSID(0, "$NetBSD: rump_syscalls.c,v 1.104 2014/07/25 08:27:36 dholland Exp $");
+__KERNEL_RCSID(0, "$NetBSD$");
 
 #include <sys/fstypes.h>
 #include <sys/proc.h>
@@ -3391,6 +3391,35 @@ rump___sysimpl_fsync_range(int fd, int flags, off_t start, off_t length)
 __weak_alias(fsync_range,rump___sysimpl_fsync_range);
 __weak_alias(_fsync_range,rump___sysimpl_fsync_range);
 __strong_alias(_sys_fsync_range,rump___sysimpl_fsync_range);
+#endif /* RUMP_KERNEL_IS_LIBC */
+
+int rump___sysimpl_uuidgen(struct uuid *, int);
+int
+rump___sysimpl_uuidgen(struct uuid * store, int count)
+{
+	register_t retval[2];
+	int error = 0;
+	int rv = -1;
+	struct sys_uuidgen_args callarg;
+
+	memset(&callarg, 0, sizeof(callarg));
+	SPARG(&callarg, store) = store;
+	SPARG(&callarg, count) = count;
+
+	error = rsys_syscall(SYS_uuidgen, &callarg, sizeof(callarg), retval);
+	rsys_seterrno(error);
+	if (error == 0) {
+		if (sizeof(int) > sizeof(register_t))
+			rv = *(int *)retval;
+		else
+			rv = *retval;
+	}
+	return rv;
+}
+#ifdef RUMP_KERNEL_IS_LIBC
+__weak_alias(uuidgen,rump___sysimpl_uuidgen);
+__weak_alias(_uuidgen,rump___sysimpl_uuidgen);
+__strong_alias(_sys_uuidgen,rump___sysimpl_uuidgen);
 #endif /* RUMP_KERNEL_IS_LIBC */
 
 int rump___sysimpl_getvfsstat(struct statvfs *, size_t, int);
@@ -7184,8 +7213,8 @@ struct sysent rump_sysent[] = {
 	    (sy_call_t *)rumpns_enosys },		/* 353 = unimplemented */
 	{ ns(struct sys_fsync_range_args), 0,
 	   (sy_call_t *)rumpns_enosys },	/* 354 = fsync_range */
-	{ 0, 0, SYCALL_NOSYS,
-	    (sy_call_t *)rumpns_enosys }, 	/* 355 = uuidgen */
+	{ ns(struct sys_uuidgen_args), 0,
+	   (sy_call_t *)rumpns_enosys },	/* 355 = uuidgen */
 	{ ns(struct sys_getvfsstat_args), 0,
 	   (sy_call_t *)rumpns_enosys },	/* 356 = getvfsstat */
 	{ ns(struct sys_statvfs1_args), 0,
