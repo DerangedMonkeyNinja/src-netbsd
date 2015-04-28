@@ -35,6 +35,8 @@ __KERNEL_RCSID(0, "$NetBSD: rump_x86_cpu_counter.c,v 1.1 2014/02/12 22:28:43 poo
 
 #include <sys/param.h>
 
+#include <rump/rumpuser.h>
+
 #include <x86/cpu_counter.h>
 
 int
@@ -61,6 +63,10 @@ cpu_counter32(void)
 uint64_t
 cpu_frequency(struct cpu_info *ci)
 {
+    char buf[21];
+    uint64_t freq = 0;
+    if (rumpuser_getparam(RUMPUSER_PARAM_CPU_FREQUENCY, &buf, 21) == 0)
+        freq = strtoul(buf, NULL, 10);
 
-	return 0;
+    return (freq);
 }
