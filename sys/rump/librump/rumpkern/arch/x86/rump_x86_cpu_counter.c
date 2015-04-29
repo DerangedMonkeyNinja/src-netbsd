@@ -43,26 +43,25 @@ int
 cpu_hascounter(void)
 {
 
-	return 0;
+	return (rumpuser_cpu_counter() != 0);
 }
 
 uint64_t
 cpu_counter(void)
 {
 
-	return 0;
+	return (rumpuser_cpu_counter());
 }
 
 uint32_t
 cpu_counter32(void)
 {
 
-	return 0;
+	return ((uint32_t)rumpuser_cpu_counter() & 0xffffffffU);
 }
 
 uint64_t
 cpu_frequency(struct cpu_info *ci)
 {
-
-	return 0;
+	return ci->ci_data.cpu_cc_freq;
 }

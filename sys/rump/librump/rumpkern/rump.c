@@ -379,6 +379,8 @@ rump_init(void)
 		TAILQ_INIT(&ci->ci_data.cpu_ld_locks);
 		__cpu_simple_lock_init(&ci->ci_data.cpu_ld_lock);
 
+		ci->ci_data.cpu_cc_freq = rumpuser_cpu_frequency();
+
 		aprint_verbose("cpu%d at thinair0: rump virtual cpu\n", i);
 	}
 

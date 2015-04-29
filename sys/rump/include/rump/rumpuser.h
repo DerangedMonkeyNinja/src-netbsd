@@ -251,4 +251,7 @@ int	rumpuser_sp_raise(void *, int);
 void	rumpuser_sp_fini(void *);
 #endif /* _RUMP_SYSPROXY || LIBRUMPUSER */
 
+uint64_t rumpuser_cpu_counter(void);
+uint64_t rumpuser_cpu_frequency(void);
+
 #endif /* _RUMP_RUMPUSER_H_ */
