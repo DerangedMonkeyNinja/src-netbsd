@@ -4,8 +4,7 @@
 
 /*
  * sysctl helper routine for hw.usermem and hw.usermem64. Values are
- * calculated on the fly based on the amount of total memory and
- * the amount of memory in use.
+ * calculated on the fly based on the amount of memory in use.
  */
 static int
 sysctl_hw_usermem(SYSCTLFN_ARGS)
@@ -17,11 +16,11 @@ sysctl_hw_usermem(SYSCTLFN_ARGS)
     node = *rnode;
     switch (rnode->sysctl_num) {
     case HW_USERMEM:
-        ui = (rump_physmemlimit - rump_curphysmem);
+        ui = (u_int)((rump_curphysmem > UINT_MAX) ? UINT_MAX : rump_curphysmem);
         node.sysctl_data = &ui;
         break;
     case HW_USERMEM64:
-        uq = (u_quad_t)(rump_physmemlimit - rump_curphysmem);
+        uq = (u_quad_t)(rump_curphysmem);
         node.sysctl_data = &uq;
         break;
     default:
@@ -45,7 +44,7 @@ SYSCTL_SETUP(sysctl_rump_hw_setup, "sysctl hw tree setup for rump kernels")
                    CTL_HW, HW_NCPU, CTL_EOL);
 
     /* hw.physmem */
-    u = ((u_int)rump_physmemlimit > UINT_MAX) ? UINT_MAX : rump_physmemlimit;
+    u = (u_int)((rump_physmemlimit > UINT_MAX) ? UINT_MAX : rump_physmemlimit);
     sysctl_createv(NULL, 0, NULL, NULL,
                    CTLFLAG_PERMANENT|CTLFLAG_IMMEDIATE,
                    CTLTYPE_INT, "physmem",
