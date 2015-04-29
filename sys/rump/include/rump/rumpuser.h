@@ -133,7 +133,6 @@ int rumpuser_clock_sleep(int, int64_t, long);
  */
 
 #define RUMPUSER_PARAM_NCPU "_RUMPUSER_NCPU"
-#define RUMPUSER_PARAM_CPU_FREQUENCY "_RUMPUSER_CPU_FREQUENCY"
 #define RUMPUSER_PARAM_HOSTNAME "_RUMPUSER_HOSTNAME"
 int rumpuser_getparam(const char *, void *, size_t);
 
