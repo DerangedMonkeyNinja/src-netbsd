@@ -115,7 +115,8 @@ do {									\
 } while (/*CONSTCOND*/0)
 
 #define RUMPMEM_UNLIMITED ((unsigned long)-1)
-extern unsigned long rump_physmemlimit;
+extern unsigned long rump_physmemlimit;  /* physical memory available (bytes) */
+extern unsigned long rump_curphysmem;    /* physical memory in use (bytes) */
 
 #define RUMP_LOCALPROC_P(p) (p->p_vmspace == vmspace_kernel())
 

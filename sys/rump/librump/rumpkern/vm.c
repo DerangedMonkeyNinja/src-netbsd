@@ -96,11 +96,11 @@ static kmutex_t pdaemonmtx;
 static kcondvar_t pdaemoncv, oomwait;
 
 unsigned long rump_physmemlimit = RUMPMEM_UNLIMITED;
+unsigned long rump_curphysmem;
 static unsigned long pdlimit = RUMPMEM_UNLIMITED; /* page daemon memlimit */
-static unsigned long curphysmem;
 static unsigned long dddlim;		/* 90% of memory limit used */
 #define NEED_PAGEDAEMON() \
-    (rump_physmemlimit != RUMPMEM_UNLIMITED && curphysmem > dddlim)
+    (rump_physmemlimit != RUMPMEM_UNLIMITED && rump_curphysmem > dddlim)
 #define PDRESERVE (2*MAXPHYS)
 
 /*
@@ -114,7 +114,7 @@ static unsigned long dddlim;		/* 90% of memory limit used */
  * Keep a list of least recently used pages.  Since the only way a
  * rump kernel can "access" a page is via lookup, we put the page
  * at the back of queue every time a lookup for it is done.  If the
- * page is in front of this global queue and we're short of memory, 
+ * page is in front of this global queue and we're short of memory,
  * it's a candidate for pageout.
  */
 static struct pglist vmpage_lruqueue;
@@ -149,7 +149,7 @@ const rb_tree_ops_t uvm_page_tree_ops = {
 };
 
 /*
- * vm pages 
+ * vm pages
  */
 
 static int
@@ -343,7 +343,7 @@ uvm_init(void)
 	/*
 	 * uvmexp.free is not used internally or updated.  The reason is
 	 * that the memory hypercall allocator is allowed to allocate
-	 * non-page sized chunks.  We use a byte count in curphysmem
+	 * non-page sized chunks.  We use a byte count in rump_curphysmem
 	 * instead.
 	 */
 	uvmexp.free = uvmexp.npages;
@@ -724,7 +724,7 @@ uvm_km_alloc(struct vm_map *map, vsize_t size, vsize_t align, uvm_flag_t flags)
 	 * anywhere except the lowest or highest 2GB, it will not
 	 * work.  Since userspace does not have access to the highest
 	 * 2GB, use the lowest 2GB.
-	 * 
+	 *
 	 * Note: this assumes the rump kernel resides in
 	 * the lowest 2GB as well.
 	 *
@@ -1204,9 +1204,9 @@ rump_hypermalloc(size_t howmuch, int alignment, bool waitok, const char *wmsg)
 	/* first we must be within the limit */
  limitagain:
 	if (thelimit != RUMPMEM_UNLIMITED) {
-		newmem = atomic_add_long_nv(&curphysmem, howmuch);
+		newmem = atomic_add_long_nv(&rump_curphysmem, howmuch);
 		if (newmem > thelimit) {
-			newmem = atomic_add_long_nv(&curphysmem, -howmuch);
+			newmem = atomic_add_long_nv(&rump_curphysmem, -howmuch);
 			if (!waitok) {
 				return NULL;
 			}
@@ -1231,7 +1231,7 @@ rump_hyperfree(void *what, size_t size)
 {
 
 	if (rump_physmemlimit != RUMPMEM_UNLIMITED) {
-		atomic_add_long(&curphysmem, -size);
+		atomic_add_long(&rump_curphysmem, -size);
 	}
 	rumpuser_free(what, size);
 }
