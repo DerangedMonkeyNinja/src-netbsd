@@ -55,6 +55,7 @@ extern sy_call_t sys_fktrace;
 extern sy_call_t sys_issetugid;
 extern sy_call_t sys_utrace;
 extern sy_call_t sys_kqueue;
+extern sy_call_t sys_uuidgen;
 extern sy_call_t sys___posix_fadvise50;
 extern sy_call_t sys___select50;
 extern sy_call_t sys___gettimeofday50;
@@ -124,6 +125,7 @@ static const struct rump_onesyscall mysys[] = {
 	{ 305,	sys_issetugid },
 	{ 306,	sys_utrace },
 	{ 344,	sys_kqueue },
+	{ 355,	sys_uuidgen },
 	{ 416,	sys___posix_fadvise50 },
 	{ 417,	sys___select50 },
 	{ 418,	sys___gettimeofday50 },
