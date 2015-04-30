@@ -1,0 +1,1 @@
+#define NATARAID	0

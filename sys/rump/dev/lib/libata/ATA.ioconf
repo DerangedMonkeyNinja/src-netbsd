@@ -1,0 +1,14 @@
+ioconf ata
+
+include "conf/files"
+include "dev/ata/files.ata"
+include "dev/pci/files.pci"
+
+pseudo-root pciide*
+pseudo-root ahcisata*
+
+atabus* at pciide? channel ?
+atabus* at ahcisata? channel ?
+
+# WD support
+wd*	at atabus? drive ? flags 0x0000

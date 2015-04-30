@@ -1,0 +1,11 @@
+#       $NetBSD, PCI_AHCISATA.ioconf, v 1.0 $
+#
+
+ioconf pci_ahcisata
+
+include "conf/files"
+include "dev/pci/files.pci"
+
+pseudo-root pci*
+
+ahcisata*   at pci? dev ? function ? flags 0x0000

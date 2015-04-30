@@ -1,0 +1,1 @@
+#define ATADEBUG	1
