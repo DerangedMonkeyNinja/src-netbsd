@@ -75,7 +75,7 @@ bus_space_read_1(bus_space_tag_t bst, bus_space_handle_t bsh,
 	if (bst == 0) {
 #ifdef IOSPACE_SUPPORTED
 		unsigned short addr = bsh + offset;
-		__asm__ __volatile__("inb %1, %0" : "=a"(rv) : "d"(addr)); 
+		__asm__ __volatile__("inb %1, %0" : "=a"(rv) : "d"(addr));
 #else
 		panic("IO space not supported");
 #endif
@@ -95,7 +95,7 @@ bus_space_read_2(bus_space_tag_t bst, bus_space_handle_t bsh,
 	if (bst == 0) {
 #ifdef IOSPACE_SUPPORTED
 		unsigned short addr = bsh + offset;
-		__asm__ __volatile__("in %1, %0" : "=a"(rv) : "d"(addr)); 
+		__asm__ __volatile__("in %1, %0" : "=a"(rv) : "d"(addr));
 #else
 		panic("IO space not supported");
 #endif
@@ -115,7 +115,7 @@ bus_space_read_4(bus_space_tag_t bst, bus_space_handle_t bsh,
 	if (bst == 0) {
 #ifdef IOSPACE_SUPPORTED
 		unsigned short addr = bsh + offset;
-		__asm__ __volatile__("inl %1, %0" : "=a"(rv) : "d"(addr)); 
+		__asm__ __volatile__("inl %1, %0" : "=a"(rv) : "d"(addr));
 #else
 		panic("IO space not supported");
 #endif
@@ -190,15 +190,15 @@ bus_space_subregion(bus_space_tag_t bst, bus_space_handle_t bsh,
 	bus_size_t offset, bus_size_t size, bus_space_handle_t *nhandlep)
 {
 
-	panic("%s: unimplemented", __func__);
+	*nhandlep = bsh + offset;
+	return (0);
 }
 
 void
 bus_space_unmap(bus_space_tag_t bst, bus_space_handle_t bsh,
 	bus_size_t size)
 {
-
-	panic("%s: unimplemented", __func__);
+	rumpcomp_pci_unmap(bsh, size);
 }
 
 void
