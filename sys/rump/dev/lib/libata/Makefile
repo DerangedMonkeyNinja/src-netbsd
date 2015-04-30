@@ -17,6 +17,7 @@ SRCS+=	wd.c ata.c \
 CPPFLAGS+= \
 	-I${.CURDIR}/opt \
 	-I${RUMPTOP}/librump/rumpkern \
+	-I${RUMPTOP}/librump/rumpvfs \
 	-I${RUMPTOP}/../dev/ic
 
 .include "${RUMPTOP}/Makefile.rump"
