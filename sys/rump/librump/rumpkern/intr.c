@@ -81,14 +81,19 @@ rumptc_get(struct timecounter *tc)
 {
 
 	KASSERT(rump_threads);
-	return ticks;
+	int64_t sec = 0;
+	long nsec = 0;
+
+	rumpuser_clock_gettime(RUMPUSER_CLOCK_ABSMONO, &sec, &nsec);
+
+	return (u_int)(((sec * 1000000000) + nsec) & UINT_MAX);
 }
 
 static struct timecounter rumptc = {
 	.tc_get_timecount	= rumptc_get,
 	.tc_poll_pps 		= NULL,
 	.tc_counter_mask	= ~0,
-	.tc_frequency		= 0,
+	.tc_frequency		= 1000000000,
 	.tc_name		= "rumpclk",
 	.tc_quality		= 0,
 };
@@ -254,7 +259,6 @@ softint_init(struct cpu_info *ci)
 	if (ci->ci_index == 0) {
 		int sithr_swap;
 
-		rumptc.tc_frequency = hz;
 		tc_init(&rumptc);
 
 		/* create deferred softint threads */

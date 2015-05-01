@@ -30,7 +30,7 @@ CPPFLAGS+=	-DMIPS1=1
 .endif
 .endif
 
-CPPFLAGS+=	-DMAXUSERS=32
+CPPFLAGS+=	-DHZ=1000 -DMAXUSERS=32
 CPPFLAGS+=	-DCOMPAT_50=1 -DCOMPAT_60=1
 
 CPPFLAGS+=	-nostdinc
@@ -191,7 +191,7 @@ _SYMQUIRK="|PF_funcs"
 # complaints about symbols like 'rumpns_XrumpBLAH' or 'XrumpBLAH';
 # the 'X' part was added by the toolchain and will need to
 # be mentioned here.
-# 
+#
 .if ${MACHINE_ARCH} == "powerpc64"
 _PQ="\.?"
 .else
