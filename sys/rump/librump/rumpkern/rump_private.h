@@ -1,4 +1,4 @@
-/*	$NetBSD: rump_private.h,v 1.87 2015/01/07 22:24:04 pooka Exp $	*/
+/*	$NetBSD: rump_private.h,v 1.92 2015/04/22 17:38:33 pooka Exp $	*/
 
 /*
  * Copyright (c) 2007-2011 Antti Kantee.  All Rights Reserved.
@@ -118,7 +118,17 @@ do {									\
 extern unsigned long rump_physmemlimit;  /* physical memory available (bytes) */
 extern unsigned long rump_curphysmem;    /* physical memory in use (bytes) */
 
-#define RUMP_LOCALPROC_P(p) (p->p_vmspace == vmspace_kernel())
+extern struct vmspace *rump_vmspace_local;
+extern struct pmap rump_pmap_local;
+#define RUMP_LOCALPROC_P(p) \
+    (p->p_vmspace == vmspace_kernel() || p->p_vmspace == rump_vmspace_local)
+
+/* vm bundle for remote clients.  the last member is the hypercall cookie */
+struct rump_spctl {
+	struct vmspace spctl_vm;
+	void *spctl;
+};
+#define RUMP_SPVM2CTL(vm) (((struct rump_spctl *)vm)->spctl)
 
 void		rump_component_load(const struct rump_component *);
 void		rump_component_init(enum rump_component_type);
@@ -164,6 +174,8 @@ void	rump_user_unschedule(int, int *, void *);
 
 void	rump_cpu_attach(struct cpu_info *);
 
+struct clockframe *rump_cpu_makeclockframe(void);
+
 void	rump_kernel_bigwrap(int *);
 void	rump_kernel_bigunwrap(int);
 
@@ -187,6 +199,7 @@ void	rump_hyperentropy_init(void);
 void	rump_lwproc_init(void);
 void	rump_lwproc_curlwp_set(struct lwp *);
 void	rump_lwproc_curlwp_clear(struct lwp *);
+int	rump_lwproc_rfork_vmspace(struct vmspace *, int);
 
 /*
  * sysproxy is an optional component.  The interfaces with "hyp"
