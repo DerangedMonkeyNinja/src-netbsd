@@ -1,7 +1,7 @@
-/*	$NetBSD: bus.h,v 1.6 2015/06/03 13:55:42 pooka Exp $	*/
+/*	$NetBSD: tap_component.c,v 1.1 2015/05/29 12:32:23 pooka Exp $	*/
 
 /*
- * Copyright (c) 2010 Antti Kantee.  All Rights Reserved.
+ * Copyright (c) 2015 Wei Liu.  All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,47 +25,40 @@
  * SUCH DAMAGE.
  */
 
-#ifndef _SYS_RUMP_BUS_H_
-#define _SYS_RUMP_BUS_H_
+#include <sys/cdefs.h>
+__KERNEL_RCSID(0, "$NetBSD: tap_component.c,v 1.1 2015/05/29 12:32:23 pooka Exp $");
 
-/*
- * This is a blanket header since archs are inline/macro-happy.
- *
- * XXX: this file should NOT exist here
- */
+#include <sys/param.h>
+#include <sys/device.h>
+#include <sys/stat.h>
 
-/* bus space defs */
-typedef unsigned long bus_addr_t;
-typedef unsigned long bus_size_t;
-typedef unsigned long bus_space_tag_t;
-typedef unsigned long bus_space_handle_t;
+#include "rump_private.h"
+#include "rump_net_private.h"
+#include "rump_vfs_private.h"
 
-/* bus dma defs */
-typedef void *bus_dma_tag_t;
-#define BUS_DMA_TAG_VALID(_tag_) ((_tag_) != NULL)
+CFDRIVER_DECL(tap, DV_IFNET, NULL);
 
-typedef struct {
-	bus_addr_t	ds_addr;
-	bus_size_t	ds_len;
-	vaddr_t		_ds_vacookie;
-	bus_size_t	_ds_sizecookie;
-} bus_dma_segment_t;
+void tapattach(int);
 
-typedef struct {
-	bus_size_t _dm_size;
-	int _dm_segcnt;
-	bus_size_t _dm_maxmaxsegsz;
-	bus_size_t _dm_boundary;
-	bus_addr_t _dm_bounce_thresh;
-	int _dm_flags;
-	void *_dm_cookie;
+RUMP_COMPONENT(RUMP_COMPONENT_NET_IF)
+{
+	extern const struct cdevsw tap_cdevsw;
+	devmajor_t bmaj, cmaj;
+	int error;
 
-	bus_size_t dm_maxsegsz;
-	bus_size_t dm_mapsize;
-	int dm_nsegs;
-	bus_dma_segment_t dm_segs[1];
-} *bus_dmamap_t;
+	config_cfdriver_attach(&tap_cd);
+	tapattach(0);
 
-#include <sys/bus_proto.h>
+	bmaj = cmaj = NODEVMAJOR;
+	error = devsw_attach("tap", NULL, &bmaj, &tap_cdevsw, &cmaj);
+	if (error != 0)
+		panic("tap devsw attach failed: %d", error);
 
-#endif /* _SYS_RUMP_BUS_H_ */
+	error = rump_vfs_makeonedevnode(S_IFCHR, "/dev/tap", cmaj, 0xfffff);
+	if (error != 0)
+		panic("cannot create tap device node: %d", error);
+
+	error = rump_vfs_makedevnodes(S_IFCHR, "/dev/tap", '0', cmaj, 0, 4);
+	if (error != 0)
+		panic("cannot create tap[0-4] device node: %d", error);
+}
